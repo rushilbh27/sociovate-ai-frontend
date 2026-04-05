@@ -84,10 +84,10 @@ export default function ContactsPage() {
                         {c.phone_number}
                       </div>
                     </td>
-                    <td className="px-6 py-3 text-sm text-gray-600">{c.caller_name || "—"}</td>
+                    <td className="px-6 py-3 text-sm text-gray-600">{c.caller_name || "-"}</td>
                     <td className="px-6 py-3 text-sm text-gray-600">{c.total_calls}</td>
                     <td className="px-6 py-3 text-sm text-gray-500">
-                      {c.last_seen ? new Date(c.last_seen).toLocaleDateString() : "—"}
+                      {c.last_seen ? new Date(c.last_seen).toLocaleDateString() : "-"}
                     </td>
                     <td className="px-6 py-3">
                       {c.is_booked ? (
@@ -95,7 +95,7 @@ export default function ContactsPage() {
                           Booked
                         </span>
                       ) : (
-                        <span className="text-sm text-gray-400">—</span>
+                        <span className="text-sm text-gray-400">-</span>
                       )}
                     </td>
                   </tr>

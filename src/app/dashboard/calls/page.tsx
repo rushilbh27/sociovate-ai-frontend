@@ -131,10 +131,10 @@ export default function CallLogsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600 capitalize">
-                      {call.disposition || "—"}
+                      {call.disposition || "-"}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                      {call.summary || "—"}
+                      {call.summary || "-"}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
                       {new Date(call.created_at).toLocaleDateString("en-IN", {

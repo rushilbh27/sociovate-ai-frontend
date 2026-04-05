@@ -17,7 +17,7 @@ const steps = [
     icon: Bot,
     step: "02",
     title: "AI Makes the Calls",
-    description: "Our AI agent calls each lead, handles objections, answers questions from your knowledge base, and qualifies interest — all naturally.",
+    description: "Our AI agent calls each lead, handles objections, answers questions from your knowledge base, and qualifies interest - all naturally.",
     iconBg: "bg-[#9DD9D2]/20",
     iconColor: "text-[#5BBDB5]",
     badge: "bg-[#9DD9D2] text-white",

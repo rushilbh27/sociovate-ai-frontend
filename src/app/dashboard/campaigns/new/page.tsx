@@ -160,7 +160,7 @@ export default function NewCampaignPage() {
               onChange={(e) => updateField("context", e.target.value)}
               rows={4}
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all bg-white text-sm resize-none"
-              placeholder="FAQ answers, product details, pricing — anything the AI should know"
+              placeholder="FAQ answers, product details, pricing - anything the AI should know"
             />
           </div>
 

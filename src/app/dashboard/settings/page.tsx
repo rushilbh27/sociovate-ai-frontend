@@ -9,7 +9,7 @@ import { Save, Bot, Key, Globe, Clock, CheckCircle, AlertCircle } from "lucide-r
 type Tab = "agent" | "api" | "webhooks" | "hours"
 
 export default function SettingsPage() {
-  const { apiKey, user, loading: authLoading } = useAuth()
+  const { apiKey, user, loading: authLoading, isAdmin } = useAuth()
   const [tab, setTab] = useState<Tab>("agent")
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
@@ -40,16 +40,16 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      {tab === "agent" && <AgentConfigTab apiKey={apiKey} authLoading={authLoading} />}
+      {tab === "agent" && <AgentConfigTab apiKey={apiKey} authLoading={authLoading} isAdmin={isAdmin} />}
       {tab === "api" && <ApiKeysTab apiKey={apiKey} />}
-      {tab === "webhooks" && <WebhooksTab apiKey={apiKey} authLoading={authLoading} />}
-      {tab === "hours" && <BusinessHoursTab apiKey={apiKey} />}
+      {tab === "webhooks" && <WebhooksTab apiKey={apiKey} authLoading={authLoading} isAdmin={isAdmin} />}
+      {tab === "hours" && <BusinessHoursTab apiKey={apiKey} isAdmin={isAdmin} authLoading={authLoading} />}
     </div>
   )
 }
 
 /* ─── Agent Config ─────────────────────────────────────────── */
-function AgentConfigTab({ apiKey, authLoading }: { apiKey: string | null; authLoading: boolean }) {
+function AgentConfigTab({ apiKey, authLoading, isAdmin }: { apiKey: string | null; authLoading: boolean; isAdmin: boolean }) {
   const [config, setConfig] = useState<AgentConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -61,22 +61,67 @@ function AgentConfigTab({ apiKey, authLoading }: { apiKey: string | null; authLo
       setLoading(false)
       return
     }
-    apiFetch<AgentConfig>("/api/agent-config", { apiKey })
-      .then(setConfig)
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [apiKey, authLoading])
+
+    async function load() {
+      try {
+        if (isAdmin) {
+          // Admin: load global config and map fields
+          const global = await apiFetch<Record<string, unknown>>("/api/config", { apiKey })
+          setConfig({
+            agent_name: (global.client_name as string) || "",
+            company_name: (global.client_name as string) || "",
+            tts_voice: (global.tts_voice as string) || "",
+            language: (global.tts_language as string) || "",
+            system_prompt: (global.agent_instructions as string) || "",
+            context_block: (global.context as string) || "",
+            objective: (global.objective as string) || "",
+            first_line: (global.first_line as string) || "",
+            voicemail_message: (global.voicemail_message as string) || "",
+            transfer_number: (global.transfer_number as string) || "",
+            webhook_url: (global.custom_post_call_url as string) || "",
+          })
+        } else {
+          const data = await apiFetch<AgentConfig>("/api/agent-config", { apiKey })
+          setConfig(data)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+      setLoading(false)
+    }
+    load()
+  }, [apiKey, authLoading, isAdmin])
 
   async function save() {
     if (!config || !apiKey) return
     setSaving(true)
     setMsg(null)
     try {
-      await apiFetch("/api/agent-config", {
-        method: "PUT",
-        apiKey,
-        body: config,
-      })
+      if (isAdmin) {
+        // Admin: save to global config, mapping fields back
+        await apiFetch("/api/config", {
+          method: "POST",
+          apiKey,
+          body: {
+            client_name: config.agent_name || config.company_name,
+            tts_voice: config.tts_voice,
+            tts_language: config.language,
+            agent_instructions: config.system_prompt,
+            context: config.context_block,
+            objective: config.objective,
+            first_line: config.first_line,
+            voicemail_message: config.voicemail_message,
+            transfer_number: config.transfer_number,
+            custom_post_call_url: config.webhook_url,
+          },
+        })
+      } else {
+        await apiFetch("/api/agent-config", {
+          method: "PUT",
+          apiKey,
+          body: config,
+        })
+      }
       setMsg({ type: "success", text: "Configuration saved!" })
     } catch {
       setMsg({ type: "error", text: "Failed to save" })
@@ -193,26 +238,40 @@ function ApiKeysTab({ apiKey }: { apiKey: string | null }) {
 }
 
 /* ─── Webhooks ─────────────────────────────────────────────── */
-function WebhooksTab({ apiKey, authLoading }: { apiKey: string | null; authLoading: boolean }) {
+function WebhooksTab({ apiKey, authLoading, isAdmin }: { apiKey: string | null; authLoading: boolean; isAdmin: boolean }) {
   const [url, setUrl] = useState("")
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState("")
 
   useEffect(() => {
     if (authLoading || !apiKey) return
-    apiFetch<{ webhook_url: string }>("/api/agent-config", { apiKey })
-      .then((c) => setUrl(c.webhook_url || ""))
-      .catch(console.error)
-  }, [apiKey, authLoading])
+    if (isAdmin) {
+      apiFetch<Record<string, unknown>>("/api/config", { apiKey })
+        .then((c) => setUrl((c.custom_post_call_url as string) || ""))
+        .catch(console.error)
+    } else {
+      apiFetch<{ webhook_url: string }>("/api/agent-config", { apiKey })
+        .then((c) => setUrl(c.webhook_url || ""))
+        .catch(console.error)
+    }
+  }, [apiKey, authLoading, isAdmin])
 
   async function save() {
     setSaving(true)
     try {
-      await apiFetch("/api/agent-config", {
-        method: "PUT",
-        apiKey,
-        body: { webhook_url: url },
-      })
+      if (isAdmin) {
+        await apiFetch("/api/config", {
+          method: "POST",
+          apiKey,
+          body: { custom_post_call_url: url },
+        })
+      } else {
+        await apiFetch("/api/agent-config", {
+          method: "PUT",
+          apiKey,
+          body: { webhook_url: url },
+        })
+      }
       setMsg("Saved!")
       setTimeout(() => setMsg(""), 2000)
     } catch {
@@ -246,11 +305,45 @@ function WebhooksTab({ apiKey, authLoading }: { apiKey: string | null; authLoadi
 }
 
 /* ─── Business Hours ───────────────────────────────────────── */
-function BusinessHoursTab({ apiKey }: { apiKey: string | null }) {
+function BusinessHoursTab({ apiKey, isAdmin, authLoading }: { apiKey: string | null; isAdmin: boolean; authLoading: boolean }) {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
   const [hours, setHours] = useState<Record<string, { enabled: boolean; start: string; end: string }>>(
     Object.fromEntries(days.map((d) => [d, { enabled: d !== "Sunday", start: "09:00", end: "18:00" }]))
   )
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState("")
+
+  useEffect(() => {
+    if (authLoading || !apiKey) return
+    async function load() {
+      try {
+        let bh: Record<string, [string, string] | null> | undefined
+        if (isAdmin) {
+          const global = await apiFetch<Record<string, unknown>>("/api/config", { apiKey })
+          bh = global.business_hours as Record<string, [string, string] | null> | undefined
+        } else {
+          const cfg = await apiFetch<AgentConfig>("/api/agent-config", { apiKey })
+          bh = cfg.business_hours
+        }
+        if (bh && typeof bh === "object") {
+          const mapped: Record<string, { enabled: boolean; start: string; end: string }> = {}
+          for (const day of days) {
+            const key = day.toLowerCase()
+            const val = bh[key]
+            if (val && Array.isArray(val)) {
+              mapped[day] = { enabled: true, start: val[0], end: val[1] }
+            } else {
+              mapped[day] = { enabled: false, start: "09:00", end: "18:00" }
+            }
+          }
+          setHours(mapped)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    load()
+  }, [apiKey, authLoading, isAdmin])
 
   function toggle(day: string) {
     setHours((h) => ({ ...h, [day]: { ...h[day], enabled: !h[day].enabled } }))
@@ -258,6 +351,28 @@ function BusinessHoursTab({ apiKey }: { apiKey: string | null }) {
 
   function update(day: string, field: "start" | "end", val: string) {
     setHours((h) => ({ ...h, [day]: { ...h[day], [field]: val } }))
+  }
+
+  async function save() {
+    if (!apiKey) return
+    setSaving(true)
+    try {
+      const bh: Record<string, [string, string] | null> = {}
+      for (const day of days) {
+        const key = day.toLowerCase()
+        bh[key] = hours[day].enabled ? [hours[day].start, hours[day].end] : null
+      }
+      if (isAdmin) {
+        await apiFetch("/api/config", { method: "POST", apiKey, body: { business_hours: bh } })
+      } else {
+        await apiFetch("/api/agent-config", { method: "PUT", apiKey, body: { business_hours: bh } })
+      }
+      setMsg("Saved!")
+      setTimeout(() => setMsg(""), 2000)
+    } catch {
+      setMsg("Failed to save")
+    }
+    setSaving(false)
   }
 
   return (
@@ -300,11 +415,15 @@ function BusinessHoursTab({ apiKey }: { apiKey: string | null }) {
         ))}
       </div>
 
+      {msg && <p className="text-sm text-green-600">{msg}</p>}
+
       <button
-        className="flex items-center gap-2 bg-brand hover:bg-brand-dark text-white px-6 py-2.5 rounded-xl font-medium transition-colors"
+        onClick={save}
+        disabled={saving}
+        className="flex items-center gap-2 bg-brand hover:bg-brand-dark text-white px-6 py-2.5 rounded-xl font-medium transition-colors disabled:opacity-50"
       >
         <Save size={16} />
-        Save Hours
+        {saving ? "Saving..." : "Save Hours"}
       </button>
     </div>
   )

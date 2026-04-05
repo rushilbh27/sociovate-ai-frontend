@@ -608,7 +608,7 @@ export default function LogsPage() {
                         )}
                       </div>
                       <span className="text-[10px] text-gray-400 truncate block mt-0.5">
-                        {c.room_name || "—"}
+                        {c.room_name || "-"}
                       </span>
                     </div>
                     <div className="text-right shrink-0">

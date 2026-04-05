@@ -20,7 +20,7 @@ export function CTA() {
             </h2>
             <p className="text-lg text-gray-500 max-w-xl mx-auto mb-10">
               Join 50+ businesses already using Sociovate AI to multiply their calling capacity.
-              Start with a free demo call — no commitment needed.
+              Start with a free demo call - no commitment needed.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">

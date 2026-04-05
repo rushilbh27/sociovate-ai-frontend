@@ -19,13 +19,13 @@ export function Features() {
             {" "}your calling.
           </h2>
           <p className="text-lg text-gray-500 max-w-xl mx-auto">
-            From first contact to closed deal — AI handles the entire workflow.
+            From first contact to closed deal - AI handles the entire workflow.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-          {/* Outbound — large */}
+          {/* Outbound - large */}
           <SpotlightCard
             className="md:col-span-2 bg-white rounded-2xl border border-orange-100 p-8 shadow-sm hover:shadow-xl hover:shadow-orange-200/30 transition-all duration-300 cursor-pointer group"
             spotlightColor="rgba(255, 136, 17, 0.07)"
@@ -84,11 +84,11 @@ export function Features() {
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Smart Booking</h3>
             <p className="text-gray-500 leading-relaxed">
-              AI checks availability, proposes slots, and confirms bookings — all in the same call.
+              AI checks availability, proposes slots, and confirms bookings - all in the same call.
             </p>
           </SpotlightCard>
 
-          {/* Analytics — large */}
+          {/* Analytics - large */}
           <SpotlightCard
             className="md:col-span-2 bg-white rounded-2xl border border-orange-100 p-8 shadow-sm hover:shadow-xl hover:shadow-orange-200/30 transition-all duration-300 cursor-pointer group"
             spotlightColor="rgba(255, 136, 17, 0.07)"
@@ -110,7 +110,7 @@ export function Features() {
                   />
                 ))}
               </div>
-              <p className="text-[10px] text-gray-400 mt-2">Calls connected — last 12 weeks</p>
+              <p className="text-[10px] text-gray-400 mt-2">Calls connected - last 12 weeks</p>
             </div>
           </SpotlightCard>
 
@@ -124,7 +124,7 @@ export function Features() {
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Hinglish AI</h3>
             <p className="text-gray-500 leading-relaxed">
-              Natural conversations in Hindi, English, or a mix — adapts to how your customers speak.
+              Natural conversations in Hindi, English, or a mix - adapts to how your customers speak.
             </p>
           </SpotlightCard>
 

@@ -222,14 +222,14 @@ export default function CampaignDetailPage() {
                 {contacts.map((ct) => (
                   <tr key={ct.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-3 text-sm font-medium text-gray-900">{ct.phone}</td>
-                    <td className="px-6 py-3 text-sm text-gray-600">{ct.name || "—"}</td>
+                    <td className="px-6 py-3 text-sm text-gray-600">{ct.name || "-"}</td>
                     <td className="px-6 py-3">
                       <span className={cn("text-xs font-medium px-2 py-1 rounded-full capitalize", contactStatusStyle[ct.status])}>
                         {ct.status}
                       </span>
                     </td>
-                    <td className="px-6 py-3 text-sm text-gray-600 capitalize">{ct.lead_score || "—"}</td>
-                    <td className="px-6 py-3 text-sm text-gray-500 max-w-xs truncate">{ct.summary || "—"}</td>
+                    <td className="px-6 py-3 text-sm text-gray-600 capitalize">{ct.lead_score || "-"}</td>
+                    <td className="px-6 py-3 text-sm text-gray-500 max-w-xs truncate">{ct.summary || "-"}</td>
                   </tr>
                 ))}
               </tbody>

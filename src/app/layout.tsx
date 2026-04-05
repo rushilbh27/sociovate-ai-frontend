@@ -19,11 +19,11 @@ const dancing = Dancing_Script({
 })
 
 export const metadata: Metadata = {
-  title: "Sociovate AI — Voice Agents That Sound Human",
+  title: "Sociovate AI - Voice Agents That Sound Human",
   description:
-    "AI-powered voice calling platform that automates outbound & inbound calls for businesses. Lead qualification, appointment booking, follow-ups — all on autopilot.",
+    "AI-powered voice calling platform that automates outbound & inbound calls for businesses. Lead qualification, appointment booking, follow-ups - all on autopilot.",
   openGraph: {
-    title: "Sociovate AI — Voice Agents That Sound Human",
+    title: "Sociovate AI - Voice Agents That Sound Human",
     description: "AI-powered voice calling that sounds indistinguishable from a real person.",
     type: "website",
   },

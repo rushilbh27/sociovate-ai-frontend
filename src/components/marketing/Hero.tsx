@@ -58,7 +58,7 @@ export function Hero() {
             style={{ animationDelay: "0.2s" }}
           >
             AI-powered calling that handles lead qualification, appointment booking,
-            and follow-ups — so your team can focus on closing.
+            and follow-ups - so your team can focus on closing.
           </p>
 
           {/* CTAs */}
@@ -107,7 +107,7 @@ export function Hero() {
                   <div className="w-3 h-3 rounded-full bg-yellow-400/70" />
                   <div className="w-3 h-3 rounded-full bg-green-400/70" />
                 </div>
-                <span className="text-xs text-gray-400 ml-2 font-mono">Sociovate Dashboard — Q1 Outbound</span>
+                <span className="text-xs text-gray-400 ml-2 font-mono">Sociovate Dashboard - Q1 Outbound</span>
               </div>
 
               {/* Stat row */}

@@ -5,12 +5,12 @@ import { Plus, Minus } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const faqs = [
-  { q: "What is Sociovate AI?", a: "Sociovate AI is an AI-powered voice calling platform that automates outbound and inbound calls for businesses. Our AI agent talks like a real person — handling lead qualification, appointment booking, follow-ups, and customer support without any human callers." },
-  { q: "How does it work?", a: "You provide your call script, lead list, and business FAQ. Our AI agent automatically makes calls or receives inbound calls, has natural conversations in Hinglish, answers questions from your knowledge base, and takes actions like booking appointments — all in real-time." },
+  { q: "What is Sociovate AI?", a: "Sociovate AI is an AI-powered voice calling platform that automates outbound and inbound calls for businesses. Our AI agent talks like a real person - handling lead qualification, appointment booking, follow-ups, and customer support without any human callers." },
+  { q: "How does it work?", a: "You provide your call script, lead list, and business FAQ. Our AI agent automatically makes calls or receives inbound calls, has natural conversations in Hinglish, answers questions from your knowledge base, and takes actions like booking appointments - all in real-time." },
   { q: "Does the AI actually sound human?", a: "Yes. Our agent speaks natural Hinglish with proper fillers like 'acha', 'bilkul', 'dekhiye'. The voice is warm and professional. Most callers don't realize they're speaking with AI." },
   { q: "How long does setup take?", a: "Basic setup takes 24-48 hours. You provide your script, FAQ knowledge base, and phone number. We handle LLM tuning, voice selection, call flow configuration, and all integrations." },
   { q: "What's the pricing?", a: "Starting plans begin at ₹4,999/month with 500 outbound minutes included. Per-minute rates decrease with volume. Custom enterprise plans are available with dedicated support and unlimited minutes." },
-  { q: "Which industries does it work for?", a: "Real estate, automobile dealerships, healthcare clinics, education institutes, insurance, financial services, e-commerce, event management — any business where phone calling is important." },
+  { q: "Which industries does it work for?", a: "Real estate, automobile dealerships, healthcare clinics, education institutes, insurance, financial services, e-commerce, event management - any business where phone calling is important." },
   { q: "Does it integrate with my existing tools?", a: "Yes. We support Google Calendar, Telegram notifications, WhatsApp messaging, and custom webhooks. Call data syncs automatically after every call." },
   { q: "Do I get call recordings and transcripts?", a: "Yes, every call gets a full recording and detailed transcript. Call summaries, caller intent, and outcome are automatically generated after each call." },
   { q: "Is there a free trial?", a: "Yes! We offer a free live demo call where you can talk to our AI agent directly. No commitment required to get started." },
