@@ -81,7 +81,7 @@ export function Demo() {
   }, [])
 
   return (
-    <section id="demo" className="py-24 bg-gradient-to-b from-[#FFF8F0] via-white to-[#FFF8F0]">
+    <section id="demo" className="py-24 bg-gradient-to-b from-[#FFF8F0] via-[#FFF8F0] to-white/50">
       <div className="max-w-5xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-14">
