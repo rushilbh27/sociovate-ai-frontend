@@ -3,8 +3,7 @@
 import { useRef, useState, useEffect, useCallback } from "react"
 import { Play, Pause } from "lucide-react"
 
-const DEMO_SRC =
-  "https://yzgdpmcjzuqbvjprffme.supabase.co/storage/v1/object/public/call-recordings/recordings/919823108893_2026-03-04_12-28-38.ogg"
+const DEMO_SRC = "/demo-call.wav"
 
 const BAR_COUNT = 40
 
