@@ -7,8 +7,95 @@ import type { CallLog } from "@/types"
 import {
   Pause, Play, Trash2, Phone, Clock, ChevronRight,
   RefreshCw, Search, Terminal, FileText, BarChart3,
-  ArrowLeft, Filter,
+  ArrowLeft, Filter, Volume2,
 } from "lucide-react"
+
+/* ── Inline Audio Player ── */
+function AudioPlayer({ src }: { src: string }) {
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const [playing, setPlaying] = useState(false)
+  const [speed, setSpeed] = useState<1 | 1.5 | 2>(1)
+  const [progress, setProgress] = useState(0)
+  const [currentTime, setCurrent] = useState(0)
+  const [duration, setDuration] = useState(0)
+
+  function togglePlay() {
+    const a = audioRef.current
+    if (!a) return
+    if (playing) { a.pause() } else { a.play() }
+    setPlaying(!playing)
+  }
+
+  function cycleSpeed() {
+    const next = speed === 1 ? 1.5 : speed === 1.5 ? 2 : 1
+    setSpeed(next as 1 | 1.5 | 2)
+    if (audioRef.current) audioRef.current.playbackRate = next
+  }
+
+  function seek(e: React.MouseEvent<HTMLDivElement>) {
+    const a = audioRef.current
+    if (!a || !duration) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width))
+    a.currentTime = pct * duration
+  }
+
+  function fmt(s: number) {
+    const m = Math.floor(s / 60)
+    const sec = Math.floor(s % 60)
+    return `${m}:${sec.toString().padStart(2, "0")}`
+  }
+
+  return (
+    <div className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2">
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="metadata"
+        onTimeUpdate={() => {
+          const a = audioRef.current
+          if (a && a.duration) {
+            setProgress((a.currentTime / a.duration) * 100)
+            setCurrent(a.currentTime)
+          }
+        }}
+        onLoadedMetadata={() => {
+          if (audioRef.current) setDuration(audioRef.current.duration)
+        }}
+        onEnded={() => { setPlaying(false); setProgress(0); setCurrent(0) }}
+      />
+      <button
+        onClick={togglePlay}
+        className="w-8 h-8 rounded-full bg-brand text-white flex items-center justify-center shrink-0 hover:bg-brand-dark transition-colors"
+      >
+        {playing ? <Pause size={14} /> : <Play size={14} className="ml-0.5" />}
+      </button>
+      <div className="flex-1 min-w-0 flex flex-col gap-1">
+        <div
+          className="h-1.5 bg-gray-200 rounded-full cursor-pointer relative group"
+          onClick={seek}
+        >
+          <div
+            className="h-full bg-brand rounded-full transition-all relative"
+            style={{ width: `${progress}%` }}
+          >
+            <span className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-brand rounded-full shadow opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+        </div>
+        <div className="flex justify-between text-[10px] text-gray-400 tabular-nums">
+          <span>{fmt(currentTime)}</span>
+          <span>{duration ? fmt(duration) : "-:--"}</span>
+        </div>
+      </div>
+      <button
+        onClick={cycleSpeed}
+        className="text-xs font-semibold text-gray-500 bg-gray-200 hover:bg-gray-300 rounded-lg px-2 py-1 transition-colors shrink-0 tabular-nums min-w-[2.5rem] text-center"
+      >
+        {speed}x
+      </button>
+    </div>
+  )
+}
 
 /* ── Types ── */
 interface LogLine {
@@ -387,6 +474,14 @@ export default function LogsPage() {
             </span>
           )}
         </div>
+        {selected.recording_url && (
+          <div>
+            <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1.5">
+              <Volume2 size={12} /> Recording
+            </p>
+            <AudioPlayer src={selected.recording_url} />
+          </div>
+        )}
         {selected.summary && (
           <div className="p-3 bg-gray-50 rounded-xl">
             <p className="text-xs font-medium text-gray-500 mb-1">Summary</p>
