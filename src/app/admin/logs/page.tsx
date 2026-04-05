@@ -7,7 +7,7 @@ import type { CallLog } from "@/types"
 import {
   Pause, Play, Trash2, Phone, Clock, ChevronRight,
   RefreshCw, Search, Terminal, FileText, BarChart3,
-  ArrowLeft, Filter, Volume2,
+  ArrowLeft, Filter, Volume2, Copy, ClipboardCheck,
 } from "lucide-react"
 
 /* ── Inline Audio Player ── */
@@ -244,6 +244,17 @@ export default function LogsPage() {
   const [logQ, setLogQ] = useState("")
   const bottom = useRef<HTMLDivElement>(null)
   const idc = useRef(0)
+
+  /* Copy to clipboard */
+  const [copied, setCopied] = useState<string | null>(null)
+  const copyTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const copyText = useCallback((text: string, label: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(label)
+      clearTimeout(copyTimeout.current)
+      copyTimeout.current = setTimeout(() => setCopied(null), 2000)
+    })
+  }, [])
 
   /* ── Effects ── */
 
@@ -494,8 +505,18 @@ export default function LogsPage() {
   const renderTranscript = () => (
     <div className="p-4 flex-1 overflow-y-auto">
       {transcript ? (
-        <div className="bg-gray-900 rounded-xl p-4 font-mono text-xs text-gray-300 whitespace-pre-wrap leading-relaxed">
-          {transcript}
+        <div className="relative">
+          <button
+            onClick={() => copyText(transcript, "transcript")}
+            className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium text-gray-400 hover:text-gray-200 hover:bg-gray-800 transition-colors z-10"
+            title="Copy transcript"
+          >
+            {copied === "transcript" ? <ClipboardCheck size={12} className="text-green-400" /> : <Copy size={12} />}
+            {copied === "transcript" ? "Copied" : "Copy"}
+          </button>
+          <div className="bg-gray-900 rounded-xl p-4 font-mono text-xs text-gray-300 whitespace-pre-wrap leading-relaxed">
+            {transcript}
+          </div>
         </div>
       ) : (
         <p className="text-xs text-gray-400 text-center py-8">
@@ -553,7 +574,7 @@ export default function LogsPage() {
           )}
         </div>
 
-        {/* Search + count */}
+        {/* Search + count + copy */}
         <div className="px-3 py-2 border-b border-gray-200 flex items-center gap-3 shrink-0">
           <div className="relative flex-1">
             <Search
@@ -571,6 +592,19 @@ export default function LogsPage() {
           <span className="text-[10px] text-gray-400 shrink-0">
             {fEvents.length}/{events.length}
           </span>
+          <button
+            onClick={() => {
+              const text = fEvents
+                .map((e) => `${e.time} [${e.level}] [${e.tag}] ${e.msg}`)
+                .join("\n")
+              copyText(text, "agent-logs")
+            }}
+            className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors shrink-0"
+            title="Copy all visible logs"
+          >
+            {copied === "agent-logs" ? <ClipboardCheck size={12} className="text-green-500" /> : <Copy size={12} />}
+            {copied === "agent-logs" ? "Copied" : "Copy"}
+          </button>
         </div>
 
         {/* Timeline */}
@@ -815,6 +849,18 @@ export default function LogsPage() {
                 className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-300"
               >
                 <Trash2 size={14} />
+              </button>
+              <button
+                onClick={() => {
+                  const text = fLogs
+                    .map((l) => `${new Date(l.timestamp).toLocaleTimeString()} [${l.level}] ${l.message}`)
+                    .join("\n")
+                  copyText(text, "live-logs")
+                }}
+                className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors text-gray-500 hover:text-gray-300"
+                title="Copy visible logs"
+              >
+                {copied === "live-logs" ? <ClipboardCheck size={14} className="text-green-400" /> : <Copy size={14} />}
               </button>
             </div>
 
