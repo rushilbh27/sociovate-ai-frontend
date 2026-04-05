@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { createClient } from "@/lib/supabase"
 import type { User } from "@supabase/supabase-js"
@@ -10,19 +10,24 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
   const [apiKey, setApiKey] = useState<string>("")
   const router = useRouter()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
 
   useEffect(() => {
     async function getSession() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          router.push("/login")
+          return
+        }
+        setUser(user)
+        setApiKey(user.user_metadata?.api_key || "")
+      } catch (err) {
+        console.error("Auth error:", err)
         router.push("/login")
-        return
+      } finally {
+        setLoading(false)
       }
-      setUser(user)
-      // api_key stored in user metadata (set during onboarding)
-      setApiKey(user.user_metadata?.api_key || "")
-      setLoading(false)
     }
     getSession()
 
@@ -36,7 +41,7 @@ export function useAuth() {
     })
 
     return () => subscription.unsubscribe()
-  }, [router, supabase.auth])
+  }, [router, supabase])
 
   async function signOut() {
     await supabase.auth.signOut()

@@ -9,7 +9,7 @@ import { Save, Bot, Key, Globe, Clock, CheckCircle, AlertCircle } from "lucide-r
 type Tab = "agent" | "api" | "webhooks" | "hours"
 
 export default function SettingsPage() {
-  const { apiKey, user } = useAuth()
+  const { apiKey, user, loading: authLoading } = useAuth()
   const [tab, setTab] = useState<Tab>("agent")
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
@@ -40,28 +40,32 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      {tab === "agent" && <AgentConfigTab apiKey={apiKey} />}
+      {tab === "agent" && <AgentConfigTab apiKey={apiKey} authLoading={authLoading} />}
       {tab === "api" && <ApiKeysTab apiKey={apiKey} />}
-      {tab === "webhooks" && <WebhooksTab apiKey={apiKey} />}
+      {tab === "webhooks" && <WebhooksTab apiKey={apiKey} authLoading={authLoading} />}
       {tab === "hours" && <BusinessHoursTab apiKey={apiKey} />}
     </div>
   )
 }
 
 /* ─── Agent Config ─────────────────────────────────────────── */
-function AgentConfigTab({ apiKey }: { apiKey: string | null }) {
+function AgentConfigTab({ apiKey, authLoading }: { apiKey: string | null; authLoading: boolean }) {
   const [config, setConfig] = useState<AgentConfig | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   useEffect(() => {
-    if (!apiKey) return
+    if (authLoading) return
+    if (!apiKey) {
+      setLoading(false)
+      return
+    }
     apiFetch<AgentConfig>("/api/agent-config", { apiKey })
       .then(setConfig)
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [apiKey])
+  }, [apiKey, authLoading])
 
   async function save() {
     if (!config || !apiKey) return
@@ -189,17 +193,17 @@ function ApiKeysTab({ apiKey }: { apiKey: string | null }) {
 }
 
 /* ─── Webhooks ─────────────────────────────────────────────── */
-function WebhooksTab({ apiKey }: { apiKey: string | null }) {
+function WebhooksTab({ apiKey, authLoading }: { apiKey: string | null; authLoading: boolean }) {
   const [url, setUrl] = useState("")
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState("")
 
   useEffect(() => {
-    if (!apiKey) return
+    if (authLoading || !apiKey) return
     apiFetch<{ webhook_url: string }>("/api/agent-config", { apiKey })
       .then((c) => setUrl(c.webhook_url || ""))
       .catch(console.error)
-  }, [apiKey])
+  }, [apiKey, authLoading])
 
   async function save() {
     setSaving(true)

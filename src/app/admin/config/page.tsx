@@ -6,19 +6,23 @@ import { apiFetch } from "@/lib/api"
 import { Save, CheckCircle, AlertCircle } from "lucide-react"
 
 export default function SystemConfigPage() {
-  const { apiKey } = useAuth()
+  const { apiKey, loading: authLoading } = useAuth()
   const [config, setConfig] = useState("")
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   useEffect(() => {
-    if (!apiKey) return
-    apiFetch<Record<string, unknown>>("/api/admin/config", { apiKey })
+    if (authLoading) return
+    if (!apiKey) {
+      setLoading(false)
+      return
+    }
+    apiFetch<Record<string, unknown>>("/api/config", { apiKey })
       .then((data) => setConfig(JSON.stringify(data, null, 2)))
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [apiKey])
+  }, [apiKey, authLoading])
 
   async function save() {
     setMsg(null)
@@ -31,7 +35,7 @@ export default function SystemConfigPage() {
 
     setSaving(true)
     try {
-      await apiFetch("/api/admin/config", {
+      await apiFetch("/api/config", {
         method: "PUT",
         apiKey,
         body: JSON.parse(config),

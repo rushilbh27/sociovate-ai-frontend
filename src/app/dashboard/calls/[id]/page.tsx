@@ -48,7 +48,7 @@ const badgeColor: Record<string, string> = {
 
 export default function CallDetailPage() {
   const params = useParams()
-  const { apiKey } = useAuth()
+  const { apiKey, loading: authLoading } = useAuth()
   const [call, setCall] = useState<CallDetail | null>(null)
   const [transcript, setTranscript] = useState<TranscriptLine[]>([])
   const [loading, setLoading] = useState(true)
@@ -56,7 +56,11 @@ export default function CallDetailPage() {
   const callId = params.id as string
 
   useEffect(() => {
-    if (!apiKey || !callId) return
+    if (authLoading) return
+    if (!apiKey || !callId) {
+      setLoading(false)
+      return
+    }
     async function load() {
       try {
         // Fetch call logs and find this one
@@ -93,7 +97,7 @@ export default function CallDetailPage() {
       setLoading(false)
     }
     load()
-  }, [apiKey, callId])
+  }, [apiKey, authLoading, callId])
 
   if (loading) {
     return (

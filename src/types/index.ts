@@ -90,9 +90,8 @@ export interface PhoneNumber {
 // Stats from /api/stats
 export interface CallStats {
   total_calls: number
-  total_duration_seconds: number
-  avg_duration_seconds: number
-  total_booked: number
+  total_bookings: number
+  avg_duration: number
   booking_rate: number
 }
 

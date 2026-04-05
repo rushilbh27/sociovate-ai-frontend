@@ -37,12 +37,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!isAdmin) return null
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-[#FFF8F0] flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white flex flex-col">
-        <div className="p-5 border-b border-gray-800">
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Admin Panel</p>
-          <h2 className="font-bold text-lg">Sociovate</h2>
+      <aside className="w-64 bg-[#1C0F00] text-white flex flex-col">
+        <div className="p-5 border-b border-white/10">
+          <p className="text-xs text-white/40 uppercase tracking-wider mb-1">Admin Panel</p>
+          <span className="font-script text-2xl text-[#FF8811]">Sociovate</span>
         </div>
 
         <nav className="flex-1 p-3 space-y-1">
@@ -54,8 +54,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors",
-                  active ? "bg-brand text-white" : "text-gray-400 hover:text-white hover:bg-gray-800"
+                  "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer",
+                  active
+                    ? "bg-[#FF8811] text-white"
+                    : "text-white/50 hover:text-white hover:bg-white/8"
                 )}
               >
                 <Icon size={18} />
@@ -65,10 +67,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="p-3 border-t border-gray-800">
+        <div className="p-3 border-t border-white/10">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 px-3 py-2.5 text-sm text-gray-400 hover:text-white transition-colors"
+            className="flex items-center gap-2 px-3 py-2.5 text-sm text-white/40 hover:text-white transition-colors cursor-pointer"
           >
             <ArrowLeft size={16} />
             Back to Dashboard

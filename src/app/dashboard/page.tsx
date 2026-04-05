@@ -27,7 +27,7 @@ function StatCard({
   color: string
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-2xl border border-orange-100 p-6 hover:shadow-md hover:shadow-orange-100/50 transition-shadow">
       <div className="flex items-start justify-between mb-4">
         <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center`}>
           <Icon size={20} className="text-white" />
@@ -35,7 +35,7 @@ function StatCard({
       </div>
       <p className="text-2xl font-bold text-gray-900">{value}</p>
       <p className="text-sm text-gray-500">{label}</p>
-      {sub && <p className="text-xs text-brand mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-[#FF8811] mt-1">{sub}</p>}
     </div>
   )
 }
@@ -71,13 +71,17 @@ const leadColor: Record<string, string> = {
 }
 
 export default function DashboardPage() {
-  const { apiKey } = useAuth()
+  const { apiKey, loading: authLoading } = useAuth()
   const [stats, setStats] = useState<CallStats | null>(null)
   const [recentCalls, setRecentCalls] = useState<CallLog[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!apiKey) return
+    if (authLoading) return
+    if (!apiKey) {
+      setLoading(false)
+      return
+    }
     async function load() {
       try {
         const [s, logs] = await Promise.all([
@@ -92,12 +96,12 @@ export default function DashboardPage() {
       setLoading(false)
     }
     load()
-  }, [apiKey])
+  }, [apiKey, authLoading])
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#FF8811] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -119,32 +123,32 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Avg Duration"
-          value={stats ? formatDuration(Math.round(stats.avg_duration_seconds)) : "N/A"}
+          value={stats ? formatDuration(Math.round(stats.avg_duration)) : "N/A"}
           icon={Clock}
           color="bg-blue-500"
         />
         <StatCard
           label="Appointments Booked"
-          value={stats?.total_booked || 0}
+          value={stats?.total_bookings || 0}
           icon={Calendar}
           color="bg-green-500"
         />
         <StatCard
           label="Booking Rate"
-          value={stats ? `${Math.round(stats.booking_rate * 100)}%` : "N/A"}
+          value={stats ? `${stats.booking_rate}%` : "N/A"}
           icon={TrendingUp}
           color="bg-orange-500"
-          sub={stats && stats.booking_rate > 0.1 ? "Above average" : undefined}
+          sub={stats && stats.booking_rate > 10 ? "Above average" : undefined}
         />
       </div>
 
       {/* Recent calls */}
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl border border-orange-100 overflow-hidden shadow-sm">
         <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-semibold text-gray-900">Recent Calls</h2>
           <Link
             href="/dashboard/calls"
-            className="text-sm text-brand hover:underline flex items-center gap-1"
+            className="text-sm text-[#FF8811] hover:underline flex items-center gap-1"
           >
             View all <ArrowUpRight size={14} />
           </Link>
@@ -173,7 +177,7 @@ export default function DashboardPage() {
                     className="hover:bg-gray-50 cursor-pointer transition-colors"
                   >
                     <td className="px-6 py-4">
-                      <Link href={`/dashboard/calls/${call.id}`} className="font-medium text-gray-900 hover:text-brand">
+                      <Link href={`/dashboard/calls/${call.id}`} className="font-medium text-gray-900 hover:text-[#FF8811]">
                         {call.phone_number}
                       </Link>
                       {call.caller_name && (

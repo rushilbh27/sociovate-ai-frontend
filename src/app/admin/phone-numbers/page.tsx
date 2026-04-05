@@ -7,7 +7,7 @@ import type { PhoneNumber, Tenant } from "@/types"
 import { Plus, Search, Trash2, Phone } from "lucide-react"
 
 export default function PhoneNumbersPage() {
-  const { apiKey } = useAuth()
+  const { apiKey, loading: authLoading } = useAuth()
   const [numbers, setNumbers] = useState<PhoneNumber[]>([])
   const [tenants, setTenants] = useState<Tenant[]>([])
   const [search, setSearch] = useState("")
@@ -20,11 +20,14 @@ export default function PhoneNumbersPage() {
   const [saving, setSaving] = useState(false)
 
   async function load() {
-    if (!apiKey) return
+    if (!apiKey) {
+      setLoading(false)
+      return
+    }
     try {
       const [n, t] = await Promise.all([
-        apiFetch<PhoneNumber[]>("/api/admin/phone-numbers", { apiKey }),
-        apiFetch<Tenant[]>("/api/admin/tenants", { apiKey }),
+        apiFetch<PhoneNumber[]>("/api/phone-numbers", { apiKey }),
+        apiFetch<Tenant[]>("/api/tenants", { apiKey }),
       ])
       setNumbers(n)
       setTenants(t)
@@ -34,13 +37,16 @@ export default function PhoneNumbersPage() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [apiKey])
+  useEffect(() => {
+    if (authLoading) return
+    load()
+  }, [apiKey, authLoading])
 
   async function addMapping() {
     if (!newPhone.trim() || !newTenantId || !apiKey) return
     setSaving(true)
     try {
-      await apiFetch("/api/admin/phone-numbers", {
+      await apiFetch("/api/phone-numbers", {
         method: "POST",
         apiKey,
         body: { phone_number: newPhone.trim(), tenant_id: newTenantId },

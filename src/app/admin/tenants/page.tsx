@@ -7,7 +7,7 @@ import type { Tenant } from "@/types"
 import { Plus, Search, Trash2 } from "lucide-react"
 
 export default function TenantsPage() {
-  const { apiKey } = useAuth()
+  const { apiKey, loading: authLoading } = useAuth()
   const [tenants, setTenants] = useState<Tenant[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
@@ -16,9 +16,12 @@ export default function TenantsPage() {
   const [creating, setCreating] = useState(false)
 
   async function load() {
-    if (!apiKey) return
+    if (!apiKey) {
+      setLoading(false)
+      return
+    }
     try {
-      const data = await apiFetch<Tenant[]>("/api/admin/tenants", { apiKey })
+      const data = await apiFetch<Tenant[]>("/api/tenants", { apiKey })
       setTenants(data)
     } catch (err) {
       console.error(err)
@@ -26,13 +29,16 @@ export default function TenantsPage() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [apiKey])
+  useEffect(() => {
+    if (authLoading) return
+    load()
+  }, [apiKey, authLoading])
 
   async function createTenant() {
     if (!newName.trim() || !apiKey) return
     setCreating(true)
     try {
-      await apiFetch("/api/admin/tenants", {
+      await apiFetch("/api/tenants", {
         method: "POST",
         apiKey,
         body: { name: newName.trim() },

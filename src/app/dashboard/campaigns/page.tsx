@@ -17,17 +17,21 @@ const statusStyle: Record<string, string> = {
 }
 
 export default function CampaignsPage() {
-  const { apiKey } = useAuth()
+  const { apiKey, loading: authLoading } = useAuth()
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!apiKey) return
+    if (authLoading) return
+    if (!apiKey) {
+      setLoading(false)
+      return
+    }
     apiFetch<Campaign[]>("/api/campaigns", { apiKey })
       .then(setCampaigns)
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [apiKey])
+  }, [apiKey, authLoading])
 
   if (loading) {
     return (

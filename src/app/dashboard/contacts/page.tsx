@@ -6,38 +6,36 @@ import { apiFetch } from "@/lib/api"
 import { Search, Phone, User } from "lucide-react"
 
 interface Contact {
-  phone: string
-  name: string | null
-  call_count: number
-  last_called: string | null
-  last_sentiment: string | null
+  phone_number: string
+  caller_name: string | null
+  total_calls: number
+  last_seen: string | null
+  is_booked: boolean
 }
 
 export default function ContactsPage() {
-  const { apiKey } = useAuth()
+  const { apiKey, loading: authLoading } = useAuth()
   const [contacts, setContacts] = useState<Contact[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!apiKey) return
+    if (authLoading) return
+    if (!apiKey) {
+      setLoading(false)
+      return
+    }
     apiFetch<Contact[]>("/api/contacts", { apiKey })
       .then(setContacts)
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [apiKey])
+  }, [apiKey, authLoading])
 
   const filtered = contacts.filter(
     (c) =>
-      c.phone.includes(search) ||
-      (c.name && c.name.toLowerCase().includes(search.toLowerCase()))
+      c.phone_number.includes(search) ||
+      (c.caller_name && c.caller_name.toLowerCase().includes(search.toLowerCase()))
   )
-
-  const sentimentColor: Record<string, string> = {
-    positive: "text-green-600 bg-green-50",
-    neutral: "text-gray-600 bg-gray-100",
-    negative: "text-red-600 bg-red-50",
-  }
 
   return (
     <div className="space-y-6">
@@ -73,28 +71,28 @@ export default function ContactsPage() {
                   <th className="px-6 py-3">Phone</th>
                   <th className="px-6 py-3">Name</th>
                   <th className="px-6 py-3">Calls</th>
-                  <th className="px-6 py-3">Last Called</th>
-                  <th className="px-6 py-3">Sentiment</th>
+                  <th className="px-6 py-3">Last Seen</th>
+                  <th className="px-6 py-3">Booked</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {filtered.map((c) => (
-                  <tr key={c.phone} className="hover:bg-gray-50 transition-colors">
+                  <tr key={c.phone_number} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-3 text-sm font-medium text-gray-900">
                       <div className="flex items-center gap-2">
                         <Phone size={14} className="text-gray-400" />
-                        {c.phone}
+                        {c.phone_number}
                       </div>
                     </td>
-                    <td className="px-6 py-3 text-sm text-gray-600">{c.name || "—"}</td>
-                    <td className="px-6 py-3 text-sm text-gray-600">{c.call_count}</td>
+                    <td className="px-6 py-3 text-sm text-gray-600">{c.caller_name || "—"}</td>
+                    <td className="px-6 py-3 text-sm text-gray-600">{c.total_calls}</td>
                     <td className="px-6 py-3 text-sm text-gray-500">
-                      {c.last_called ? new Date(c.last_called).toLocaleDateString() : "—"}
+                      {c.last_seen ? new Date(c.last_seen).toLocaleDateString() : "—"}
                     </td>
                     <td className="px-6 py-3">
-                      {c.last_sentiment ? (
-                        <span className={`text-xs font-medium px-2 py-1 rounded-full capitalize ${sentimentColor[c.last_sentiment] || "text-gray-500 bg-gray-50"}`}>
-                          {c.last_sentiment}
+                      {c.is_booked ? (
+                        <span className="text-xs font-medium px-2 py-1 rounded-full text-green-600 bg-green-50">
+                          Booked
                         </span>
                       ) : (
                         <span className="text-sm text-gray-400">—</span>

@@ -18,76 +18,50 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError("")
-
     const supabase = createClient()
-    const { error: err } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (err) {
-      setError(err.message)
-      setLoading(false)
-      return
-    }
-
+    const { error: err } = await supabase.auth.signInWithPassword({ email, password })
+    if (err) { setError(err.message); setLoading(false); return }
     router.push("/dashboard")
   }
 
   async function handleMagicLink() {
-    if (!email) {
-      setError("Enter your email first")
-      return
-    }
+    if (!email) { setError("Enter your email first"); return }
     setLoading(true)
     setError("")
-
     const supabase = createClient()
     const { error: err } = await supabase.auth.signInWithOtp({
       email,
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     })
-
-    if (err) {
-      setError(err.message)
-      setLoading(false)
-      return
-    }
-
-    setError("")
+    if (err) { setError(err.message); setLoading(false); return }
     setLoading(false)
     alert("Check your email for the login link!")
   }
 
   return (
-    <div className="min-h-screen dreamy-bg flex items-center justify-center px-6">
-      {/* Floating decorations */}
+    <div className="min-h-screen dreamy-bg flex items-center justify-center px-6 relative overflow-hidden">
+      {/* Warm decorative orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl animate-float-slow" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-[#9DD9D2]/25 rounded-full blur-3xl animate-float" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-[#F4D06F]/20 blur-3xl rounded-full animate-float-slow" />
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-[#FF8811]/10 rounded-full blur-3xl animate-float" />
       </div>
 
       <div className="relative z-10 w-full max-w-md">
-        {/* Back */}
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand mb-8 transition-colors">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-[#FF8811] mb-8 transition-colors cursor-pointer">
           <ArrowLeft size={16} />
           Back to home
         </Link>
 
-        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-white/50 shadow-xl p-8">
-          {/* Logo */}
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-light flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
-            </div>
-            <span className="text-xl font-bold">
-              Socio<span className="text-brand">vate</span>
-            </span>
+        <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-orange-100 shadow-xl shadow-orange-100/40 p-8">
+          {/* Cursive logo */}
+          <div className="mb-2">
+            <span className="font-script text-3xl text-[#FF8811]">Sociovate</span>
           </div>
           <p className="text-gray-500 text-sm mb-8">Sign in to your dashboard</p>
 
           {error && (
-            <div className="bg-red-50 text-red-600 text-sm rounded-lg px-4 py-3 mb-6 border border-red-100">
+            <div className="bg-red-50 text-red-600 text-sm rounded-xl px-4 py-3 mb-6 border border-red-100">
               {error}
             </div>
           )}
@@ -99,7 +73,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all bg-white"
+                className="w-full px-4 py-3 rounded-xl border border-orange-100 focus:border-[#FF8811] focus:ring-2 focus:ring-[#FF8811]/20 outline-none transition-all bg-white"
                 placeholder="you@company.com"
                 required
               />
@@ -111,14 +85,14 @@ export default function LoginPage() {
                   type={showPw ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-brand focus:ring-2 focus:ring-brand/20 outline-none transition-all bg-white pr-12"
+                  className="w-full px-4 py-3 rounded-xl border border-orange-100 focus:border-[#FF8811] focus:ring-2 focus:ring-[#FF8811]/20 outline-none transition-all bg-white pr-12"
                   placeholder="••••••••"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPw(!showPw)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
                 >
                   {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -126,11 +100,11 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-gray-500">
-                <input type="checkbox" className="rounded border-gray-300" />
+              <label className="flex items-center gap-2 text-gray-500 cursor-pointer">
+                <input type="checkbox" className="rounded border-orange-200 accent-[#FF8811]" />
                 Remember me
               </label>
-              <Link href="/forgot-password" className="text-brand hover:underline">
+              <Link href="/forgot-password" className="text-[#FF8811] hover:underline cursor-pointer">
                 Forgot password?
               </Link>
             </div>
@@ -138,29 +112,29 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-brand hover:bg-brand-dark text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
+              className="w-full bg-[#FF8811] hover:bg-[#E07300] text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50 cursor-pointer glow-brand-sm"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
           <div className="my-6 flex items-center gap-4">
-            <div className="flex-1 h-px bg-gray-200" />
+            <div className="flex-1 h-px bg-orange-100" />
             <span className="text-xs text-gray-400 uppercase">or</span>
-            <div className="flex-1 h-px bg-gray-200" />
+            <div className="flex-1 h-px bg-orange-100" />
           </div>
 
           <button
             onClick={handleMagicLink}
             disabled={loading}
-            className="w-full border border-gray-200 hover:border-brand/30 text-gray-700 py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
+            className="w-full border border-orange-200 hover:border-[#FF8811]/50 text-gray-700 hover:text-[#FF8811] py-3 rounded-xl font-medium transition-colors disabled:opacity-50 cursor-pointer"
           >
             Send Magic Link
           </button>
 
           <p className="text-center text-sm text-gray-500 mt-6">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-brand font-medium hover:underline">
+            <Link href="/signup" className="text-[#FF8811] font-medium hover:underline cursor-pointer">
               Sign up
             </Link>
           </p>

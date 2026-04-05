@@ -27,7 +27,7 @@ const contactStatusStyle: Record<string, string> = {
 
 export default function CampaignDetailPage() {
   const params = useParams()
-  const { apiKey } = useAuth()
+  const { apiKey, loading: authLoading } = useAuth()
   const campaignId = params.id as string
 
   const [campaign, setCampaign] = useState<Campaign | null>(null)
@@ -37,7 +37,11 @@ export default function CampaignDetailPage() {
   const [actionLoading, setActionLoading] = useState("")
 
   const loadData = useCallback(async () => {
-    if (!apiKey) return
+    if (authLoading) return
+    if (!apiKey) {
+      setLoading(false)
+      return
+    }
     try {
       const [c, p, ct] = await Promise.all([
         apiFetch<Campaign>(`/api/campaigns/${campaignId}`, { apiKey }),
@@ -51,7 +55,7 @@ export default function CampaignDetailPage() {
       console.error(err)
     }
     setLoading(false)
-  }, [apiKey, campaignId])
+  }, [apiKey, authLoading, campaignId])
 
   useEffect(() => {
     loadData()

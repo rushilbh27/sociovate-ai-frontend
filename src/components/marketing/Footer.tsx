@@ -1,74 +1,80 @@
 import Link from "next/link"
-import { Phone, Mail, MapPin } from "lucide-react"
+import { Mail, Phone, MapPin } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="bg-gray-950 text-gray-400 pt-20 pb-8">
+    <footer
+      className="text-gray-500 pt-16 pb-8 border-t border-orange-100"
+      style={{ background: "linear-gradient(180deg, #FFF3DC 0%, #FFF8F0 100%)" }}
+    >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-14">
           {/* Brand */}
           <div className="md:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand to-brand-light flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S</span>
-              </div>
-              <span className="text-xl font-bold text-white">
-                Socio<span className="text-brand-light">vate</span>
-              </span>
+            <div className="mb-4">
+              <span className="font-script text-3xl text-[#FF8811] leading-none">Sociovate</span>
             </div>
-            <p className="text-sm leading-relaxed">
+            <p className="text-sm leading-relaxed text-gray-500">
               AI voice agents that sound human. Automate your calls, multiply your team.
             </p>
           </div>
 
           {/* Product */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Product</h4>
+            <h4 className="text-gray-800 font-semibold mb-5 text-xs uppercase tracking-widest">Product</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-              <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
-              <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
-              <li><a href="#faq" className="hover:text-white transition-colors">FAQ</a></li>
+              {[
+                { label: "Features", href: "#features" },
+                { label: "Pricing", href: "#pricing" },
+                { label: "How It Works", href: "#how-it-works" },
+                { label: "FAQ", href: "#faq" },
+              ].map((l) => (
+                <li key={l.label}>
+                  <a href={l.href} className="hover:text-[#FF8811] transition-colors cursor-pointer">{l.label}</a>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Company */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Company</h4>
+            <h4 className="text-gray-800 font-semibold mb-5 text-xs uppercase tracking-widest">Company</h4>
             <ul className="space-y-3 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+              {["About", "Blog", "Careers", "Contact"].map((label) => (
+                <li key={label}>
+                  <a href="#" className="hover:text-[#FF8811] transition-colors cursor-pointer">{label}</a>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Get in Touch</h4>
+            <h4 className="text-gray-800 font-semibold mb-5 text-xs uppercase tracking-widest">Get in Touch</h4>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center gap-2">
-                <Mail size={14} />
-                <a href="mailto:hello@sociovate.com" className="hover:text-white transition-colors">hello@sociovate.com</a>
+              <li className="flex items-center gap-2.5">
+                <Mail size={13} className="text-[#FF8811] shrink-0" />
+                <a href="mailto:hello@sociovate.com" className="hover:text-[#FF8811] transition-colors">hello@sociovate.com</a>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone size={14} />
+              <li className="flex items-center gap-2.5">
+                <Phone size={13} className="text-[#9DD9D2] shrink-0" />
                 <span>+91 81494 83065</span>
               </li>
-              <li className="flex items-center gap-2">
-                <MapPin size={14} />
+              <li className="flex items-center gap-2.5">
+                <MapPin size={13} className="text-[#F4D06F] shrink-0" />
                 <span>Pune, India</span>
               </li>
             </ul>
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs">&copy; {new Date().getFullYear()} Sociovate AI. All rights reserved.</p>
+        <div className="border-t border-orange-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-gray-400">
+            &copy; {new Date().getFullYear()} Sociovate AI. All rights reserved.
+          </p>
           <div className="flex gap-6 text-xs">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-[#FF8811] transition-colors cursor-pointer">Privacy Policy</a>
+            <a href="#" className="hover:text-[#FF8811] transition-colors cursor-pointer">Terms of Service</a>
           </div>
         </div>
       </div>

@@ -26,18 +26,22 @@ function formatDuration(s: number): string {
 }
 
 export default function CallLogsPage() {
-  const { apiKey } = useAuth()
+  const { apiKey, loading: authLoading } = useAuth()
   const [calls, setCalls] = useState<CallLog[]>([])
   const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!apiKey) return
+    if (authLoading) return
+    if (!apiKey) {
+      setLoading(false)
+      return
+    }
     apiFetch<CallLog[]>("/api/logs", { apiKey })
       .then(setCalls)
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [apiKey])
+  }, [apiKey, authLoading])
 
   const filtered = calls.filter(
     (c) =>
